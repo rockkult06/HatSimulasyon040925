@@ -954,7 +954,11 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       dayjs(`2023-01-01 ${currentTime}`).isAfter(dayjs(`2023-01-01 ${endTimeRef.current}`))
     ) {
       setIsCompleted(true)
-      pauseSimulation()
+      setIsRunning(false)
+if (timerRef.current) {
+  clearInterval(timerRef.current)
+  timerRef.current = null
+}
       addSimulationLog("Simülasyon tamamlandı")
     }
   }, [currentTime, isRunning])
@@ -1101,7 +1105,11 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                 }, 100)
               }, 0)
             } else {
-              pauseSimulation()
+              setIsRunning(false)
+if (timerRef.current) {
+  clearInterval(timerRef.current)
+  timerRef.current = null
+}
               setIsCompleted(true)
               addSimulationLog("Simülasyon tamamlandı")
             }
@@ -1190,7 +1198,11 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                   }, 100)
                 }, 0)
               } else {
-                pauseSimulation()
+                setIsRunning(false)
+if (timerRef.current) {
+  clearInterval(timerRef.current)
+  timerRef.current = null
+}
                 setIsCompleted(true)
                 addSimulationLog("Simülasyon tamamlandı")
               }
@@ -1240,7 +1252,11 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                     }, 100)
                   }, 0)
                 } else {
-                  pauseSimulation()
+                  setIsRunning(false)
+if (timerRef.current) {
+  clearInterval(timerRef.current)
+  timerRef.current = null
+}
                   setIsCompleted(true)
                   addSimulationLog("Simülasyon tamamlandı")
                 }
@@ -1311,7 +1327,11 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // loadStopData fonksiyonunu güncelle - veri yükleme sonrası simülasyonu sıfırla
   const loadStopData = (data: Stop[]) => {
     if (isRunning) {
-      pauseSimulation()
+      setIsRunning(false)
+if (timerRef.current) {
+  clearInterval(timerRef.current)
+  timerRef.current = null
+}
     }
 
     // Garaj durağını ekle (eğer yoksa)
@@ -1336,7 +1356,11 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // loadPassengerData fonksiyonunu güncelle - veri yükleme sonrası simülasyonu sıfırla
   const loadPassengerData = (data: Passenger[]) => {
     if (isRunning) {
-      pauseSimulation()
+      setIsRunning(false)
+if (timerRef.current) {
+  clearInterval(timerRef.current)
+  timerRef.current = null
+}
     }
 
     console.log("Yüklenen yolcu verileri:", data)
@@ -1352,7 +1376,11 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // loadBusData fonksiyonunu ekle - otobüs verilerini yükle
   const loadBusData = (data: Bus[]) => {
     if (isRunning) {
-      pauseSimulation()
+      setIsRunning(false)
+if (timerRef.current) {
+  clearInterval(timerRef.current)
+  timerRef.current = null
+}
     }
 
     // Otobüslerin başlangıç durağını garaj olarak ayarla
@@ -1396,7 +1424,11 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // resetToDefaultData fonksiyonunu güncelle - varsayılan verilere döndükten sonra simülasyonu sıfırla
   const resetToDefaultData = () => {
     if (isRunning) {
-      pauseSimulation()
+      setIsRunning(false)
+if (timerRef.current) {
+  clearInterval(timerRef.current)
+  timerRef.current = null
+}
     }
 
     console.log("Varsayılan verilere dönülüyor")
@@ -1415,7 +1447,11 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const addExtraBus = (extraBusData: ExtraBusData) => {
     // Simülasyon çalışıyorsa durdur
     if (isRunning) {
-      pauseSimulation()
+      setIsRunning(false)
+if (timerRef.current) {
+  clearInterval(timerRef.current)
+  timerRef.current = null
+}
     }
 
     // Yeni otobüs ID'si oluştur (mevcut en yüksek ID + 1)
@@ -1505,7 +1541,11 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const stepSimulation = () => {
     // Simülasyon çalışıyorsa durdur
     if (isRunning) {
-      pauseSimulation()
+      setIsRunning(false)
+if (timerRef.current) {
+  clearInterval(timerRef.current)
+  timerRef.current = null
+}
     }
 
     // Bir adım ilerlet (her zaman 1 saniye)
