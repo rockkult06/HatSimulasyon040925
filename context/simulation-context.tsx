@@ -94,7 +94,6 @@ interface SimulationLog {
 // SimulationContextType içine ek sefer oluşturma fonksiyonunu ekle
 interface SimulationContextType {
   isRunning: boolean
-  isPaused: boolean
   currentTime: string
   stops: Stop[]
   passengers: Passenger[]
@@ -105,7 +104,6 @@ interface SimulationContextType {
   isCompleted: boolean
   simulationLogs: SimulationLog[]
   startSimulation: () => void
-  pauseSimulation: () => void
   resetSimulation: () => void
   stepSimulation: () => void
   setSimulationParams: (params: SimulationParams) => void
@@ -121,7 +119,6 @@ const SimulationContext = createContext<SimulationContextType | undefined>(undef
 export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Core state
   const [isRunning, setIsRunning] = useState(false)
-  const [isPaused, setIsPaused] = useState(false)
   const [isCompleted, setIsCompleted] = useState(false)
   const [currentTime, setCurrentTime] = useState("07:00:00")
   const [stops, setStops] = useState<Stop[]>(defaultStopData)
@@ -219,29 +216,21 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   }, [currentTime, stops])
 
-  // Pause simulation
-  const pauseSimulation = () => {
+
+  // resetSimulation fonksiyonunu güncelle - yüklenen verileri koruyacak şekilde değiştir
+  const resetSimulation = () => {
+    // First stop
     setIsRunning(false)
-    setIsPaused(true)
     if (timerRef.current) {
       clearInterval(timerRef.current)
       timerRef.current = null
     }
-    // Önemli: Simülasyonu durdururken isCompleted'i değiştirme
-    // böylece kullanıcı tekrar başlat butonuna tıkladığında kaldığı yerden devam edebilir
-  }
-
-  // resetSimulation fonksiyonunu güncelle - yüklenen verileri koruyacak şekilde değiştir
-  const resetSimulation = () => {
-    // First pause
-    pauseSimulation()
 
     // Then reset all state
     setCurrentTime(startTimeRef.current)
     setWaitingPassengers([])
     setPassengerHistory([])
     setIsCompleted(false)
-    setIsPaused(false)
     // Simülasyon loglarını temizle
     setSimulationLogs([])
     // İşlenen olayları temizle
@@ -996,8 +985,8 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const startTime = simulationParams.startTime + ":00"
     const startTimeDayjs = dayjs(`2023-01-01 ${startTime}`)
 
-    // Eğer simülasyon ilk kez başlatılıyorsa (currentTime başlangıç zamanındaysa) ve duraklatılmamışsa
-    if (currentTime === startTime && !isPaused) {
+    // Eğer simülasyon ilk kez başlatılıyorsa (currentTime başlangıç zamanındaysa)
+    if (currentTime === startTime) {
       // Başlangıç zamanında veya daha önce gelen yolcuları "waiting" olarak işaretle
       const initialWaiting = passengers
         .filter((p) => dayjs(`2023-01-01 ${p.arrivalTime}`).isSameOrBefore(startTimeDayjs) && !p.status)
@@ -1064,7 +1053,6 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
 
     setIsRunning(true)
-    setIsPaused(false)
     setIsCompleted(false)
 
     // Simülasyon başlangıç logu ekle
@@ -1225,7 +1213,7 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     // Eğer simülasyon çalışıyorsa ve sadece hız değişiyorsa
     if (
-      (wasRunning || isPaused) &&
+      wasRunning &&
       params.speed !== simulationParams.speed &&
       params.startTime === simulationParams.startTime &&
       params.duration === simulationParams.duration &&
@@ -1265,8 +1253,8 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           Math.max(10, 1000 / params.speed), // Minimum 10ms interval for very high speeds
         )
       }
-    } else if (skipReset || isPaused) {
-      // Duraklatılmış simülasyonu devam ettirirken sadece parametreleri güncelle
+    } else if (skipReset) {
+      // Sadece parametreleri güncelle
       setSimulationParams(params)
       
       // Simülasyon süresini değiştirdiğimizde bitiş zamanını güncelle
@@ -1277,7 +1265,7 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       endTimeRef.current = endTime
 
       console.log(`Simülasyon parametreleri güncellendi (reset olmadan): ${startTime} - ${endTime}, Süre: ${params.duration} dakika`)
-    } else if (!wasRunning && !isPaused) {
+    } else if (!wasRunning) {
       // Yeni simülasyon başlatılıyor, sadece parametreleri güncelle
       setSimulationParams(params)
       
@@ -1292,7 +1280,11 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     } else {
       // Diğer parametreler değişiyorsa, simülasyonu durdur ve parametreleri güncelle
       if (wasRunning) {
-        pauseSimulation()
+        setIsRunning(false)
+        if (timerRef.current) {
+          clearInterval(timerRef.current)
+          timerRef.current = null
+        }
       }
 
       setSimulationParams(params)
@@ -1539,7 +1531,6 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // value objesine addExtraBus fonksiyonunu ekle
   const value = {
     isRunning,
-    isPaused,
     currentTime,
     stops,
     passengers,
@@ -1550,7 +1541,6 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     isCompleted,
     simulationLogs,
     startSimulation,
-    pauseSimulation,
     resetSimulation,
     stepSimulation,
     setSimulationParams: updateSimulationParams,

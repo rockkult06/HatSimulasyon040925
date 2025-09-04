@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Progress } from "@/components/ui/progress"
 import { useSimulation } from "@/context/simulation-context"
-import { Play, Pause, StepForward, Square, RotateCcw, Plus, Bus, Zap } from "lucide-react"
+import { Play, StepForward, Square, RotateCcw, Plus, Bus, Zap } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
@@ -154,11 +154,9 @@ const SPEED_STAGES = [
 export default function SimulationControl() {
   const {
     isRunning,
-    isPaused,
     isCompleted,
     currentTime,
     startSimulation,
-    pauseSimulation,
     resetSimulation,
     stepSimulation,
     setSimulationParams,
@@ -192,13 +190,6 @@ export default function SimulationControl() {
 
   // Simülasyonu başlat
   const handleStartSimulation = () => {
-    // Eğer duraklatılmışsa, kaldığı yerden devam et
-    if (isPaused) {
-      // Duraklatılmış simülasyonu devam ettirirken parametreleri değiştirme
-      startSimulation()
-      return
-    }
-
     // Seçilen aşamaya göre hızı belirle
     const selectedStage = SPEED_STAGES.find((stage) => stage.id === speedStage)
     const speed = selectedStage ? selectedStage.value : 1
@@ -223,10 +214,6 @@ export default function SimulationControl() {
     }, 100)
   }
 
-  // Simülasyonu duraklat
-  const handlePauseSimulation = () => {
-    pauseSimulation()
-  }
 
   // Simülasyonu durdur (tamamen sıfırla)
   const handleStopSimulation = () => {
@@ -256,8 +243,8 @@ export default function SimulationControl() {
   const handleSpeedStageChange = (newStage: number) => {
     setSpeedStage(newStage)
 
-    // Eğer simülasyon çalışıyorsa veya duraklatılmışsa hızı anında güncelle
-    if ((isRunning || isPaused) && simulationParams) {
+    // Eğer simülasyon çalışıyorsa hızı anında güncelle
+    if (isRunning && simulationParams) {
       const selectedStage = SPEED_STAGES.find((stage) => stage.id === newStage)
       const speed = selectedStage ? selectedStage.value : 1
 
@@ -280,7 +267,7 @@ export default function SimulationControl() {
           type="time"
           value={startTime}
           onChange={(e) => setStartTime(e.target.value)}
-          disabled={isRunning || isPaused}
+          disabled={isRunning}
         />
       </div>
 
@@ -293,7 +280,7 @@ export default function SimulationControl() {
           max="120"
           value={duration}
           onChange={(e) => setDuration(e.target.value)}
-          disabled={isRunning || isPaused}
+          disabled={isRunning}
         />
       </div>
 
@@ -373,20 +360,11 @@ export default function SimulationControl() {
               className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-xl shadow-md"
             >
               <Play className="mr-2 h-4 w-4" />
-              {isPaused ? "Devam Et" : isCompleted ? "Yeniden Başlat" : "Başlat"}
+              {isCompleted ? "Yeniden Başlat" : "Başlat"}
               {speedStage === 4 && <Zap className="ml-2 h-4 w-4" />}
             </Button>
           )}
 
-          {/* Duraklat butonu */}
-          {isRunning && (
-            <Button
-              onClick={handlePauseSimulation}
-              className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl shadow-md"
-            >
-              <Pause className="mr-2 h-4 w-4" /> Duraklat
-            </Button>
-          )}
 
           {/* Durdur butonu */}
           <Button
