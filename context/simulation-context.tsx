@@ -224,9 +224,8 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       clearInterval(timerRef.current)
       timerRef.current = null
     }
-    // Önemli: Simülasyonu durdururken isCompleted'i false olarak bırak
+    // Önemli: Simülasyonu durdururken isCompleted'i değiştirme
     // böylece kullanıcı tekrar başlat butonuna tıkladığında kaldığı yerden devam edebilir
-    setIsCompleted(false)
   }
 
   // resetSimulation fonksiyonunu güncelle - yüklenen verileri koruyacak şekilde değiştir
@@ -1214,8 +1213,8 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   }
 
   // setSimulationParams fonksiyonunu güncelle
-  const updateSimulationParams = (params: SimulationParams) => {
-    console.log("Simülasyon parametreleri güncelleniyor:", params)
+  const updateSimulationParams = (params: SimulationParams, skipReset = false) => {
+    console.log("Simülasyon parametreleri güncelleniyor:", params, "skipReset:", skipReset)
 
     const wasRunning = isRunning
 
@@ -1261,6 +1260,18 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           Math.max(10, 1000 / params.speed), // Minimum 10ms interval for very high speeds
         )
       }
+    } else if (skipReset) {
+      // Duraklatılmış simülasyonu devam ettirirken sadece parametreleri güncelle
+      setSimulationParams(params)
+      
+      // Simülasyon süresini değiştirdiğimizde bitiş zamanını güncelle
+      const startTime = params.startTime + ":00"
+      startTimeRef.current = startTime
+
+      const endTime = dayjs(`2023-01-01 ${startTime}`).add(params.duration, "minute").format("HH:mm:ss")
+      endTimeRef.current = endTime
+
+      console.log(`Simülasyon parametreleri güncellendi (reset olmadan): ${startTime} - ${endTime}, Süre: ${params.duration} dakika`)
     } else {
       // Diğer parametreler değişiyorsa, simülasyonu durdur ve parametreleri güncelle
       if (wasRunning) {

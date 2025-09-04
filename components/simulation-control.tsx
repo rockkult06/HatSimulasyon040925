@@ -203,7 +203,7 @@ export default function SimulationControl() {
     const selectedStage = SPEED_STAGES.find((stage) => stage.id === speedStage)
     const speed = selectedStage ? selectedStage.value : 1
 
-    // Önce ayarları uygula
+    // Önce ayarları uygula (yeni simülasyon için reset ile)
     setSimulationParams({
       startTime,
       duration: Number.parseInt(duration),
@@ -259,8 +259,8 @@ export default function SimulationControl() {
   const handleSpeedStageChange = (newStage: number) => {
     setSpeedStage(newStage)
 
-    // Eğer simülasyon çalışıyorsa hızı anında güncelle
-    if (isRunning && simulationParams) {
+    // Eğer simülasyon çalışıyorsa veya duraklatılmışsa hızı anında güncelle
+    if ((isRunning || isPaused) && simulationParams) {
       const selectedStage = SPEED_STAGES.find((stage) => stage.id === newStage)
       const speed = selectedStage ? selectedStage.value : 1
 
