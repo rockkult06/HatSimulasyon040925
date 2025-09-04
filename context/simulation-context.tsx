@@ -1225,7 +1225,7 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     // Eğer simülasyon çalışıyorsa ve sadece hız değişiyorsa
     if (
-      wasRunning &&
+      (wasRunning || isPaused) &&
       params.speed !== simulationParams.speed &&
       params.startTime === simulationParams.startTime &&
       params.duration === simulationParams.duration &&
