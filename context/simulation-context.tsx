@@ -1277,6 +1277,18 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       endTimeRef.current = endTime
 
       console.log(`Simülasyon parametreleri güncellendi (reset olmadan): ${startTime} - ${endTime}, Süre: ${params.duration} dakika`)
+    } else if (!wasRunning && !isPaused) {
+      // Yeni simülasyon başlatılıyor, sadece parametreleri güncelle
+      setSimulationParams(params)
+      
+      // Simülasyon süresini değiştirdiğimizde bitiş zamanını güncelle
+      const startTime = params.startTime + ":00"
+      startTimeRef.current = startTime
+
+      const endTime = dayjs(`2023-01-01 ${startTime}`).add(params.duration, "minute").format("HH:mm:ss")
+      endTimeRef.current = endTime
+
+      console.log(`Simülasyon parametreleri güncellendi (yeni simülasyon): ${startTime} - ${endTime}, Süre: ${params.duration} dakika`)
     } else {
       // Diğer parametreler değişiyorsa, simülasyonu durdur ve parametreleri güncelle
       if (wasRunning) {

@@ -203,6 +203,12 @@ export default function SimulationControl() {
     const selectedStage = SPEED_STAGES.find((stage) => stage.id === speedStage)
     const speed = selectedStage ? selectedStage.value : 1
 
+    // Simülasyonu başlatmadan önce konsola mevcut verileri yazdır
+    console.log("Simülasyon başlatılıyor - Durak sayısı:", stops.length)
+    console.log("Simülasyon başlatılıyor - Yolcu sayısı:", passengers.length)
+    console.log("Simülasyon başlatılıyor - Otobüs sayısı:", buses.length)
+    console.log("Simülasyon başlatılıyor - Hız aşaması:", speedStage, "- Hız:", speed)
+
     // Önce ayarları uygula (yeni simülasyon için reset ile)
     setSimulationParams({
       startTime,
@@ -210,12 +216,6 @@ export default function SimulationControl() {
       speed: speed,
       repeat,
     })
-
-    // Simülasyonu başlatmadan önce konsola mevcut verileri yazdır
-    console.log("Simülasyon başlatılıyor - Durak sayısı:", stops.length)
-    console.log("Simülasyon başlatılıyor - Yolcu sayısı:", passengers.length)
-    console.log("Simülasyon başlatılıyor - Otobüs sayısı:", buses.length)
-    console.log("Simülasyon başlatılıyor - Hız aşaması:", speedStage, "- Hız:", speed)
 
     // Sonra simülasyonu başlat
     setTimeout(() => {
