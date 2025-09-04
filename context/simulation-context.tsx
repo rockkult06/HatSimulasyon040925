@@ -996,8 +996,8 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const startTime = simulationParams.startTime + ":00"
     const startTimeDayjs = dayjs(`2023-01-01 ${startTime}`)
 
-    // Eğer simülasyon ilk kez başlatılıyorsa (currentTime başlangıç zamanındaysa)
-    if (currentTime === startTime) {
+    // Eğer simülasyon ilk kez başlatılıyorsa (currentTime başlangıç zamanındaysa) ve duraklatılmamışsa
+    if (currentTime === startTime && !isPaused) {
       // Başlangıç zamanında veya daha önce gelen yolcuları "waiting" olarak işaretle
       const initialWaiting = passengers
         .filter((p) => dayjs(`2023-01-01 ${p.arrivalTime}`).isSameOrBefore(startTimeDayjs) && !p.status)
