@@ -1265,7 +1265,7 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           Math.max(10, 1000 / params.speed), // Minimum 10ms interval for very high speeds
         )
       }
-    } else if (skipReset) {
+    } else if (skipReset || isPaused) {
       // Duraklatılmış simülasyonu devam ettirirken sadece parametreleri güncelle
       setSimulationParams(params)
       
