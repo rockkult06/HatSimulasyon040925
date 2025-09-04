@@ -194,6 +194,7 @@ export default function SimulationControl() {
   const handleStartSimulation = () => {
     // Eğer duraklatılmışsa, kaldığı yerden devam et
     if (isPaused) {
+      // Duraklatılmış simülasyonu devam ettirirken parametreleri değiştirme
       startSimulation()
       return
     }
