@@ -154,6 +154,7 @@ const SPEED_STAGES = [
 export default function SimulationControl() {
   const {
     isRunning,
+    isPaused,
     isCompleted,
     currentTime,
     startSimulation,
@@ -173,7 +174,6 @@ export default function SimulationControl() {
   const [speedStage, setSpeedStage] = useState(1) // 1-4 arası aşama
   const [repeat, setRepeat] = useState(false)
   const [progress, setProgress] = useState(0)
-  const [isPaused, setIsPaused] = useState(false)
 
   // Simülasyon ilerleme durumunu hesapla
   useEffect(() => {
@@ -194,7 +194,6 @@ export default function SimulationControl() {
   const handleStartSimulation = () => {
     // Eğer duraklatılmışsa, kaldığı yerden devam et
     if (isPaused) {
-      setIsPaused(false)
       startSimulation()
       return
     }
@@ -226,13 +225,11 @@ export default function SimulationControl() {
   // Simülasyonu duraklat
   const handlePauseSimulation = () => {
     pauseSimulation()
-    setIsPaused(true)
   }
 
   // Simülasyonu durdur (tamamen sıfırla)
   const handleStopSimulation = () => {
     resetSimulation()
-    setIsPaused(false)
   }
 
   // Simülasyon ayarlarını sıfırla
@@ -252,7 +249,6 @@ export default function SimulationControl() {
 
     // Simülasyonu sıfırla ve ek seferleri kaldır
     resetToDefaultData()
-    setIsPaused(false)
   }
 
   // Hız aşamasını değiştir

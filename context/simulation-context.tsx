@@ -94,6 +94,7 @@ interface SimulationLog {
 // SimulationContextType içine ek sefer oluşturma fonksiyonunu ekle
 interface SimulationContextType {
   isRunning: boolean
+  isPaused: boolean
   currentTime: string
   stops: Stop[]
   passengers: Passenger[]
@@ -120,6 +121,7 @@ const SimulationContext = createContext<SimulationContextType | undefined>(undef
 export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Core state
   const [isRunning, setIsRunning] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
   const [isCompleted, setIsCompleted] = useState(false)
   const [currentTime, setCurrentTime] = useState("07:00:00")
   const [stops, setStops] = useState<Stop[]>(defaultStopData)
@@ -220,6 +222,7 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // Pause simulation
   const pauseSimulation = () => {
     setIsRunning(false)
+    setIsPaused(true)
     if (timerRef.current) {
       clearInterval(timerRef.current)
       timerRef.current = null
@@ -238,6 +241,7 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setWaitingPassengers([])
     setPassengerHistory([])
     setIsCompleted(false)
+    setIsPaused(false)
     // Simülasyon loglarını temizle
     setSimulationLogs([])
     // İşlenen olayları temizle
@@ -1060,6 +1064,7 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
 
     setIsRunning(true)
+    setIsPaused(false)
     setIsCompleted(false)
 
     // Simülasyon başlangıç logu ekle
@@ -1522,6 +1527,7 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // value objesine addExtraBus fonksiyonunu ekle
   const value = {
     isRunning,
+    isPaused,
     currentTime,
     stops,
     passengers,
