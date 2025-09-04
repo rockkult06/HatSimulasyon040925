@@ -327,7 +327,7 @@ export default function SimulationControl() {
       </div>
 
       <div className="flex items-center space-x-2">
-        <Switch id="repeat" checked={repeat} onCheckedChange={setRepeat} disabled={isRunning || isPaused} />
+        <Switch id="repeat" checked={repeat} onCheckedChange={setRepeat} disabled={isRunning} />
         <Label htmlFor="repeat">Simülasyonu Tekrarla</Label>
       </div>
 
